@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Nodes.Vfx.Utilities;
+using MegaCrit.Sts2.Core.Runs;
 
 namespace RobMerchant;
 
@@ -311,7 +312,24 @@ public partial class RugTouchController : Control
 
 	private void OnConfirmed()
 	{
-		Log.Info("[RobMerchant] 确认抢劫（阶段1：尚未接战斗）");
+		NMerchantRoom? room = NMerchantRoom.Instance;
+		if (room == null)
+		{
+			Log.Warn("[RobMerchant] 确认抢劫时找不到商店房间");
+			return;
+		}
+
+		IRunState? runState = room.Room.GetLocalInventory().Player.RunState;
+		if (runState == null || RobSession.IsRobbed(room.Room) || RobRunData.HasRobbed(runState))
+		{
+			Log.Warn("[RobMerchant] 本商店已处理过，忽略确认");
+			return;
+		}
+
+		Log.Info("[RobMerchant] 确认抢劫，准备进入商人战斗");
+
+		// 等确认弹窗自己关掉之后再开战，避免弹窗与战斗转场打架
+		Callable.From(() => ShopRobCombat.Start(room.Room)).CallDeferred();
 	}
 
 	private void OnCancelled()
