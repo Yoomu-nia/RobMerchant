@@ -1,0 +1,17 @@
+; Engine configuration file.
+; 仅用于 Godot 侧识别项目名/程序集名，本 Mod 不打包 pck。
+
+config_version=5
+
+[application]
+
+config/name="RobMerchant"
+config/features=PackedStringArray("4.5", "Mobile")
+
+[dotnet]
+
+project/assembly_name="RobMerchant"
+
+[rendering]
+
+renderer/rendering_method="mobile"

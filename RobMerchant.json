@@ -1,0 +1,17 @@
+{
+	"id": "RobMerchant",
+	"name": "抢劫商人",
+	"author": "QAQ",
+	"description": "在商店节点新增“抢劫商人”：与商人战斗，胜利后返回原商店，所有商品价格归零，由玩家自行挑选。",
+	"version": "0.1.0",
+	"min_game_version": "0.111.0",
+	"has_pck": false,
+	"has_dll": true,
+	"dependencies": [
+		{
+			"id": "STS2-RitsuLib",
+			"min_version": "0.6.10"
+		}
+	],
+	"affects_gameplay": true
+}
