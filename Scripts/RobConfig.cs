@@ -28,4 +28,7 @@ internal static class RobConfig
 
 	/// <summary>确认弹窗正文。</summary>
 	public const string ConfirmBody = "商人已经警告过你了。确认动手吗？\n失败会按正常死亡处理。";
+
+	/// <summary>是否把商店房间的节点结构打印到日志（摆位置时打开，稳定后可关掉）。</summary>
+	public const bool DumpRoomNodes = true;
 }
