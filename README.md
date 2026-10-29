@@ -1,6 +1,6 @@
 # 抢劫商人（Rob Merchant）
 
-《杀戮尖塔 2》Mod：在商店里触碰商人的地毯挑衅他，打一架之后回到这家商店，商品全部免费。
+《杀戮尖塔 2》Mod：在商店里触碰商人的地毯挑衅他，打一架之后回到这家商店，商品全部免费。全程AI许愿式编程，没有一点我的代码。
 
 > **Rob the Merchant** — a mod for *Slay the Spire 2* (single player & co-op).
 > A “touch the rug” button appears in every shop. Poke it a few times, the merchant warns you,
