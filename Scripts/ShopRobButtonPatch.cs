@@ -21,6 +21,13 @@ internal static class ShopRobButtonPatch
 			return;
 		}
 
+		// 已经抢过的商店不再显示按钮（重开界面时会走到这里）
+		if (RobSession.IsRobbed(__instance.Room))
+		{
+			Log.Info("[RobMerchant] 该商店已被抢劫，不重复生成按钮");
+			return;
+		}
+
 		var button = new Button
 		{
 			Name = ButtonName,
@@ -50,11 +57,7 @@ internal static class ShopRobButtonPatch
 		}
 
 		var dialog = new NRobConfirmDialog();
-		dialog.Confirmed += () =>
-		{
-			// 阶段 3：这里启动商人战斗
-			Log.Info("[RobMerchant] （阶段3将在这里启动战斗）");
-		};
+		dialog.Confirmed += () => ShopRobCombat.Start(room.Room);
 		room.AddChild(dialog);
 	}
 }

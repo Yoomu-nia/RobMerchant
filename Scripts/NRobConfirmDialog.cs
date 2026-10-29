@@ -86,7 +86,7 @@ public partial class NRobConfirmDialog : Control
 		_yesButton = new Button { Text = "动手", CustomMinimumSize = new Vector2(160, 48) };
 		_yesButton.Pressed += () =>
 		{
-			Log.Info("[RobMerchant] 确认抢劫（阶段2：尚未接战斗）");
+			Log.Info("[RobMerchant] 确认抢劫");
 			Confirmed?.Invoke();
 			Close();
 		};
