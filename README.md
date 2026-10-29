@@ -47,11 +47,12 @@
 
 ## 已知限制
 
-1. **读档会丢失“同一批商品”**：商店库存本来就不进原版存档（`AbstractRoom.FromSerializable`
-   只支持战斗房和事件房），读档后商店会重新生成。
-2. **战斗中途存档退出**：游戏在胜利瞬间会自动存一次“已结束的战斗房”，
-   如果此时退出再进，会直接进入那个战斗房领奖励，**不会回到商店**。
-3. 读档后如果人还在被抢过的那家商店里，商人会按“本局已抢劫”处理（隐藏），不再给免费购物。
+1. **SL（读档）之后，商人卖的东西会变**：原版商店库存本来就不进存档
+   （`AbstractRoom.FromSerializable` 只支持战斗房和事件房），
+   所以读档重进免费商店时货架会**随机重新生成**——商品种类和数量都会变，
+   但价格仍然是 0。
+2. 因为存档点就在免费商店里，**每次读档都会重新刷出一批免费商品**（可反复刷）。
+3. **战斗胜利前存档退出**：此时最后存档还是“进入商店前”，读档后商人在场，需要重新抢一次。
 4. 单人模式设计，未测试联机。
 5. 敌人目前是原版假商人（名字/血量/意图的自定义方案见 `自定义商人敌人方案.md`，暂缓）。
 
@@ -61,9 +62,11 @@
 - `Scripts/ShopRobButtonPatch.cs`：商店按钮 + 后续商店隐藏商人
 - `Scripts/NRobConfirmDialog.cs`：确认弹窗（代码构建，不依赖游戏场景）
 - `Scripts/ShopRobCombat.cs`：发起商人战斗
-- `Scripts/MerchantRoomResumePatch.cs`：补写 `MerchantRoom.Resume`，战斗后回商店
+- `Scripts/MerchantRoomResumePatch.cs`：补写 `MerchantRoom.Resume`，战斗后回商店并在此存档
 - `Scripts/ShopZeroPricePatch.cs`：价格归零 + 禁用补货
-- `Scripts/RobRunData.cs`：本局持久化标记（RitsuLib）
+- `Scripts/SkipVictorySavePatch.cs`：跳过战斗胜利时的自动存档
+- `Scripts/ReloadIntoFreeShopPatch.cs`：读档重进免费商店时跳过重复历史记录
+- `Scripts/RobRunData.cs`：本局持久化标记 + 免费商店坐标（RitsuLib）
 - `Scripts/RobSession.cs`：本局内的临时状态（内存）
 
 ## 构建
