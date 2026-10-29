@@ -36,12 +36,9 @@ internal static class ShopZeroPricePatch
 			return;
 		}
 
-		// 删卡服务不是“商品”，保持原价
-		if (__2 is MerchantCardRemovalEntry)
-		{
-			return;
-		}
-
+		// 暂时把删卡服务也一起归零（按你的要求）。
+		// 注意：原版购买删卡服务时走 OneOffSynchronizer.DoLocalMerchantCardRemoval(goldCost)，
+		// goldCost = Cost = 0 → 只扣 0 金币，删卡本身正常；用过后 Used=true，不会无限次。
 		if (IsRobbingShop(__0))
 		{
 			__result = 0m;
