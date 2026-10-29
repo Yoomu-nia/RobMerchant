@@ -1,0 +1,25 @@
+﻿namespace RobMerchant;
+
+/// <summary>
+/// 内嵌的小地毯图标（96x72 PNG，base64）。
+/// 由 tools/make_rug_icon.ps1 生成；换图标只需替换这段字符串。
+/// </summary>
+internal static class RugIconData
+{
+	public const string Base64 =
+		"iVBORw0KGgoAAAANSUhEUgAAAGAAAABICAYAAAAJZ/BjAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAReSURB" +
+		"VHhe7Zs7aBRRFIYXBAkIYiGoIGbNJjNhwRfBR6MYiGJAUSQSEgMGsQgWPgpRC4lFIGCTIpUiLrviowtYaBksdDc2KQQtLVNaWq7njOfOnh3vzmY3yb0zd84P" +
+		"H8Hd9e7///M6DDs5kUgkEolEIpFIJBKJRCKRSJRgVUt+vlb27q2U/Xe1ire2UvHrrlCr+L9rZf8TZHu6Uho4SpGToeVSb0+17D0Co3+ixl3lW9krrZZ6d1EF" +
+		"9oTlw96xqjPpOsFRXirupSrsKDgkmaml+YH6/FShfme4rz7m5Z3h9umD9bmJQv397EDzRoDTElVhXnguBBPhaWdxpl9r3jVmrxWaN0LFu0KV5PC0ZOwawfd+" +
+		"3PN1Zl3l+d3+xkaAoYMqyVUr/nT4esVbhr8LwWtbsVHgi5fUl+FeoTPqKnhKahTt/6RKcsEUCP9m70X4t1H4UdO1cDRTC6MhnVFXGS/mm4qlSkIFk+Fr/2ww" +
+		"HcIRAp9p2ig4RdFHuxdfUGfSdXh+qiRWfKPUSoOn6OXuxQ3oDK6HWyc3Z+PZWIfnp0rMihvQGWzH3PUT9R8fJoO/uvfXi611eH6qxPAUxAzoDMahwiq6Lc/m" +
+		"Ojw/VWJ4CmIGdAZbEQ3bSWiO7XV4fqrE7BTEF9YZ1PFg9Ig2rALf1/2/KElYh+enSkIlegp6+2REGxZf132+FbbX4fmpklglagqKhu60NIXNdXh+qsSsuAGd" +
+		"wXao0N2WprC1Ds9PlaRnClJ0esFshY11eH6qJB1TkCvw/FRJ8qcgl+D5qZJQci/IADw/VRKrRN4LSjM8P1ViVtyAzqDr8PxUSfqmoDTD81Ml6ZuCXLsdnaop" +
+		"SN0E2+gMb2sdnp8qCZX4KUiFVXRbns11eH6qJFaJmYKiYTsJzbG9Ds9PlZgVN6AzqCMJt5E5G1mH56dK0jEFqZteUTq9mWZ7HZ6fKknPFBQN3WlpCpvr8PxU" +
+		"SbqmIBW629IUttbh+amSUKm5F9TpBbMVNtbh+amSWMm9oE2G56dKzIob0Bl0HZ6fKjE+BYU/Tb9xLFu/DUVUdoQqMT0FeVX1ZY8vufVARjtuHm/8Ohp/pEyV" +
+		"GJ+CFtTC5YfZej4AnwJS2XVPyRiagrwLfNH757JxFODe//VVIzeWTJXEatOnIFTw6CYZQVPPpguBQZ3xtDN1GMbUiUL984tG+bAT/sJiqQ7zwqcEwUhmHk+N" +
+		"gns0VRHI6BSk9KXkDfILchaAi+ganoKpglBGp6Co4GIzg1/KH11yjY+Lhe9v5vIvh4o9Byh2k4xOQS3UC1wEJjPAZcAH/pORKUijYUBn1HVGgW1ArLZkCmLa" +
+		"B+jMZYU+wKpwD7gK6My5zjhgbxRl2g4cB3QmXeUMkIjyudAQXpzw3KgznXbw4nsI2AEkXrgx9gM4B58HdIGSDvoeAnDCS0Xp7YQh9gBFAE9ZI4Sta8gYoDyg" +
+		"H9y70d9OILPaDWAJCtxYWMxG4OshIpFIJBKJRCKRSCmX+wsYSZWreE/udwAAAABJRU5ErkJggg==" ;
+}
+

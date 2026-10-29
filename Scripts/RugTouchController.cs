@@ -10,10 +10,10 @@ using MegaCrit.Sts2.Core.Nodes.Vfx.Utilities;
 namespace RobMerchant;
 
 /// <summary>
-/// 商店房间里的「碰一下地毯」按钮。
+/// 商店房间里的「碰一下地毯」按钮（方形边框，原版暗棕+金色配色）。
 ///
-/// UI 用原版配色自绘（奶油色文字 + 金色描边 + 深色半透明底板），字体从场景里已有的 MegaLabel 复制，
-/// 避免出现 Godot 默认字体那种“出戏”的样子。
+/// 组成：深棕半透明方板（圆角 10、金色内描边、投影）+ 内嵌地毯小图标 + 奶油色文字。
+/// 字体从场景里已有的 MegaLabel 复制，避免 Godot 默认字体。
 ///
 /// - 挂在 NMerchantRoom 节点下（不是购买界面）
 /// - 每次点击先播一句商人警告台词（原版气泡，纯文本）
@@ -22,26 +22,30 @@ namespace RobMerchant;
 /// </summary>
 public partial class RugTouchController : Control
 {
+	private static readonly Vector2 PlateSize = new(300, 64);
+
+	private static readonly Color PlateColor = new(0.165f, 0.118f, 0.090f, 0.88f);
+	private static readonly Color PlateColorHover = new(0.24f, 0.17f, 0.12f, 0.95f);
+	private static readonly Color BorderColor = new(0.79f, 0.64f, 0.15f, 0.65f);
+	private static readonly Color BorderColorHover = new(0.79f, 0.64f, 0.15f, 1f);
+	private static readonly Vector2 IconSize = new(48, 36);
+
 	private static bool _dumpedTree;
 
 	private readonly Panel _plate = new();
+	private readonly TextureRect _icon = new();
 	private readonly Label _label = new();
 
 	private int _touches;
 	private NSpeechBubbleVfx? _lastBubble;
 	private bool _placed;
 
-	private static readonly Color PlateColor = new(0.06f, 0.05f, 0.04f, 0.55f);
-	private static readonly Color PlateColorHover = new(0.10f, 0.08f, 0.05f, 0.8f);
-	private static readonly Color BorderColor = new(0.94f, 0.78f, 0.32f, 0.55f);
-	private static readonly Color BorderColorHover = new(0.94f, 0.78f, 0.32f, 1f);
-
 	public RugTouchController()
 	{
 		Name = "RobMerchantRugTouch";
 		MouseFilter = MouseFilterEnum.Stop;
-		CustomMinimumSize = new Vector2(228, 60);
-		Size = new Vector2(228, 60);
+		CustomMinimumSize = PlateSize;
+		Size = PlateSize;
 		TooltipText = RobConfig.TouchButtonText;
 
 		_plate.Name = "Plate";
@@ -50,17 +54,28 @@ public partial class RugTouchController : Control
 		_plate.AddThemeStyleboxOverride("panel", BuildStyle(PlateColor, BorderColor));
 		AddChild(_plate);
 
+		_icon.Name = "Icon";
+		_icon.MouseFilter = MouseFilterEnum.Ignore;
+		_icon.ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize;
+		_icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
+		_icon.Position = new Vector2(14, (PlateSize.Y - IconSize.Y) * 0.5f);
+		_icon.Size = IconSize;
+		AddChild(_icon);
+
 		_label.Name = "Label";
 		_label.Text = RobConfig.TouchButtonText;
 		_label.MouseFilter = MouseFilterEnum.Ignore;
 		_label.HorizontalAlignment = HorizontalAlignment.Center;
 		_label.VerticalAlignment = VerticalAlignment.Center;
-		_label.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
-		_label.AddThemeFontSizeOverride("font_size", 24);
+		_label.Position = new Vector2(14 + IconSize.X + 6, 0);
+		_label.Size = new Vector2(PlateSize.X - (14 + IconSize.X + 6) - 16, PlateSize.Y);
+		_label.AddThemeFontSizeOverride("font_size", 25);
 		_label.AddThemeColorOverride("font_color", StsColors.cream);
 		_label.AddThemeColorOverride("font_outline_color", Colors.Black);
 		_label.AddThemeConstantOverride("outline_size", 6);
 		AddChild(_label);
+
+		ApplyIcon();
 
 		MouseEntered += OnHoverIn;
 		MouseExited += OnHoverOut;
@@ -85,15 +100,36 @@ public partial class RugTouchController : Control
 		var style = new StyleBoxFlat
 		{
 			BgColor = background,
-			BorderColor = border
+			BorderColor = border,
+			ShadowColor = new Color(0f, 0f, 0f, 0.35f),
+			ShadowSize = 4,
+			ShadowOffset = new Vector2(0f, 3f)
 		};
 		style.SetBorderWidthAll(2);
-		style.SetCornerRadiusAll(12);
-		style.ContentMarginLeft = 10;
-		style.ContentMarginRight = 10;
-		style.ContentMarginTop = 6;
-		style.ContentMarginBottom = 6;
+		style.SetCornerRadiusAll(10);
 		return style;
+	}
+
+	/// <summary>从内嵌 base64 解出地毯图标，不需要 pck、不需要外部文件。</summary>
+	private void ApplyIcon()
+	{
+		try
+		{
+			byte[] bytes = Convert.FromBase64String(RugIconData.Base64);
+			var image = new Image();
+			Error error = image.LoadPngFromBuffer(bytes);
+			if (error != Error.Ok)
+			{
+				Log.Warn("[RobMerchant] 地毯图标解码失败: " + error);
+				return;
+			}
+
+			_icon.Texture = ImageTexture.CreateFromImage(image);
+		}
+		catch (Exception e)
+		{
+			Log.Warn("[RobMerchant] 地毯图标加载异常: " + e.Message);
+		}
 	}
 
 	/// <summary>从场景里已有的 MegaLabel 复制游戏字体，避免 Godot 默认字体。</summary>
@@ -147,7 +183,7 @@ public partial class RugTouchController : Control
 	{
 		_plate.AddThemeStyleboxOverride("panel", BuildStyle(PlateColorHover, BorderColorHover));
 		_label.AddThemeColorOverride("font_color", StsColors.gold);
-		Scale = new Vector2(1.05f, 1.05f);
+		Scale = new Vector2(1.04f, 1.04f);
 	}
 
 	private void OnHoverOut()
@@ -168,8 +204,8 @@ public partial class RugTouchController : Control
 		_placed = true;
 		DumpRoomNodesOnce(room);
 
-		// 商店场景里没有名字带 rug 的节点（日志已确认：房间只有 SceneContainer / ProceedButton /
-		// Inventory / CardDetailScreen），所以直接用商人按钮定位：商人脚下、向左偏 = 地毯上。
+		// 商店场景里没有名字带 rug 的节点（日志已确认），所以直接用商人按钮定位：
+		// 商人脚下、向左偏 = 地毯上。
 		Vector2 target;
 		Control? merchantButton = room.MerchantButton;
 		if (merchantButton != null && merchantButton.Size != Vector2.Zero)
@@ -189,8 +225,6 @@ public partial class RugTouchController : Control
 
 		PivotOffset = new Vector2(Size.X * 0.5f, Size.Y * 0.5f);
 		GlobalPosition = target - new Vector2(Size.X * 0.5f, Size.Y * 0.5f);
-		_plate.Size = Size;
-		_label.Size = Size;
 		Log.Info($"[RobMerchant] 地毯按钮位置 = {GlobalPosition}");
 	}
 
