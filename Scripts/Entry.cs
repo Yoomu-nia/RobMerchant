@@ -32,6 +32,16 @@ public class Entry
 			Log.Error("[RobMerchant] 注册单局数据失败: " + e);
 		}
 
-		Log.Info("[RobMerchant] initialized (stage 5)");
+		// 注册“抢劫商人”网络动作（联机时各端同步进入战斗）
+		try
+		{
+			RobNetAction.Register();
+		}
+		catch (Exception e)
+		{
+			Log.Error("[RobMerchant] 注册网络动作失败: " + e);
+		}
+
+		Log.Info("[RobMerchant] initialized (multiplayer)");
 	}
 }

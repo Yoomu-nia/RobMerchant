@@ -36,8 +36,8 @@ internal static class RugTouchPatch
 
 		RobSession.EnsureRun(runState);
 
-		bool isFreeShop = RobSession.IsRobbed(shop) || RobRunData.IsFreeShopHere(runState);
-		bool robbedRun = RobRunData.HasRobbed(runState);
+		bool isFreeShop = RobFlags.IsFreeShop(runState, shop);
+		bool robbedRun = RobFlags.HasRobbed(runState);
 
 		if (!isFreeShop && robbedRun)
 		{

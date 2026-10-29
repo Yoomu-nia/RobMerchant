@@ -2,6 +2,7 @@ using Godot;
 using MegaCrit.Sts2.addons.mega_text;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Logging;
+using MegaCrit.Sts2.Core.Map;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
@@ -320,16 +321,43 @@ public partial class RugTouchController : Control
 		}
 
 		IRunState? runState = room.Room.GetLocalInventory().Player.RunState;
-		if (runState == null || RobSession.IsRobbed(room.Room) || RobRunData.HasRobbed(runState))
+		if (runState is not RunState state || RobFlags.HasRobbed(runState) || RobFlags.IsFreeShop(runState, room.Room))
 		{
 			Log.Warn("[RobMerchant] 本商店已处理过，忽略确认");
 			return;
 		}
 
-		Log.Info("[RobMerchant] 确认抢劫，准备进入商人战斗");
+		if (state.CurrentMapCoord is not MapCoord coord)
+		{
+			Log.Warn("[RobMerchant] 拿不到当前地图坐标，忽略确认");
+			return;
+		}
 
-		// 等确认弹窗自己关掉之后再开战，避免弹窗与战斗转场打架
-		Callable.From(() => ShopRobCombat.Start(room.Room)).CallDeferred();
+		var payload = new RobPayload
+		{
+			ActIndex = state.CurrentActIndex,
+			Col = coord.col,
+			Row = coord.row
+		};
+
+		Log.Info($"[RobMerchant] 确认抢劫，请求网络动作（act={payload.ActIndex} col={payload.Col} row={payload.Row}）");
+
+		bool queued = false;
+		try
+		{
+			queued = RobNetAction.Request(RunManager.Instance, payload);
+		}
+		catch (Exception e)
+		{
+			Log.Error("[RobMerchant] 网络动作入队异常: " + e);
+		}
+
+		if (!queued)
+		{
+			// 单人/离线兜底：直接本地开战
+			Log.Warn("[RobMerchant] 网络动作入队失败，退回本地开战");
+			Callable.From(() => ShopRobCombat.Start(room.Room)).CallDeferred();
+		}
 	}
 
 	private void OnCancelled()

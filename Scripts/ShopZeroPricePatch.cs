@@ -24,12 +24,7 @@ internal static class ShopZeroPricePatch
 	/// <summary>当前商店是否处于“已抢劫 / 免费”状态（内存里的那家，或读档重进的那家）。</summary>
 	private static bool IsRobbingShop(IRunState? runState)
 	{
-		if (runState?.CurrentRoom is not MerchantRoom room)
-		{
-			return false;
-		}
-
-		return RobSession.IsRobbed(room) || RobRunData.IsFreeShopHere(runState);
+		return runState?.CurrentRoom is MerchantRoom room && RobFlags.IsFreeShop(runState, room);
 	}
 
 	[HarmonyPatch(typeof(Hook), nameof(Hook.ModifyMerchantPrice))]

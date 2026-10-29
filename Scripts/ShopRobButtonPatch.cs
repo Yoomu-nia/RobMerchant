@@ -28,8 +28,8 @@ internal static class ShopRobButtonPatch
 		// 读档重进免费商店时，历史记录已经在存档里，跳过重复追加
 		RobSession.SuppressHistoryAppend = false;
 
-		bool isFreeShop = RobSession.IsRobbed(shop) || RobRunData.IsFreeShopHere(runState);
-		bool robbedRun = RobRunData.HasRobbed(runState);
+		bool isFreeShop = RobFlags.IsFreeShop(runState, shop);
+		bool robbedRun = RobFlags.HasRobbed(runState);
 
 		if (!isFreeShop && robbedRun)
 		{
