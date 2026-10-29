@@ -1,4 +1,10 @@
 bin/
 obj/
 .godot/
+.vs/
+dist/
 *.user
+*.zip
+
+# 本机路径配置，不提交
+Directory.Build.props

@@ -2,6 +2,12 @@
 
 《杀戮尖塔 2》的单人模式 Mod：在商店里抢劫商人，打一架之后回到原商店，商品全部免费。
 
+> **Rob the Merchant** — a single-player mod for *Slay the Spire 2*.
+> A “Rob the merchant” button appears in every shop. Fight the merchant, win, and you return to
+> the same shop with every price set to 0. Choose what you want, leave the rest.
+> After robbing once, all later shops in the run have no merchant. Resets on a new run.
+> Game v0.111.0 · requires RitsuLib.
+
 ## 版本
 
 - 游戏：v0.111.0（正式版）
@@ -62,8 +68,50 @@
 
 ## 构建
 
-```powershell
-dotnet build -c Release -p:ModsOutDir="<你想输出到的目录>"
+前置：.NET SDK 9 或更新、游戏本体、已安装 RitsuLib（创意工坊）。
+
+游戏目录按以下顺序解析：
+
+1. `-p:Sts2Dir="你的游戏目录"`
+2. 环境变量 `STS2_DIR`
+3. 常见 Steam 安装位置（会检查 `sts2.dll` 是否存在）
+4. 都没有 → 构建时给出明确报错
+
+推荐在工程目录建一个 **不提交** 的 `Directory.Build.props`（已加入 `.gitignore`）：
+
+```xml
+<Project>
+  <PropertyGroup>
+    <Sts2Dir>D:\Steam\steamapps\common\Slay the Spire 2</Sts2Dir>
+  </PropertyGroup>
+</Project>
 ```
 
-默认输出到 `...\Slay the Spire 2\mods\RobMerchant\`。
+然后：
+
+```powershell
+dotnet build -c Release
+```
+
+默认会把 dll 与 json 复制到 `<游戏目录>\mods\RobMerchant\`；想输出到别处：
+
+```powershell
+dotnet build -c Release -p:ModsOutDir="D:\out"
+```
+
+RitsuLib 路径默认是
+`<游戏目录>\..\..\workshop\content\2868840\3747602295\compat\0.111.0`，
+如果你的工坊目录不同，用 `-p:RitsuLibDir="..."` 指定。
+
+## 仓库结构
+
+```
+RobMerchant/
+├─ Scripts/                 源码
+├─ RobMerchant.csproj       工程（路径可覆盖，无硬编码）
+├─ RobMerchant.json         Mod 清单
+├─ project.godot            Godot 工程标识
+├─ README.md
+└─ LICENSE                  MIT
+```
+

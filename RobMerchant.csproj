@@ -5,13 +5,26 @@
 		<LangVersion>13.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
 
-		<!-- 游戏目录：只作为引用来源，不会写入 -->
-		<Sts2Dir>D:\Steam\steamapps\common\Slay the Spire 2</Sts2Dir>
+	<!--
+		游戏目录解析顺序：
+		  1. 命令行 -p:Sts2Dir="..."
+		  2. 环境变量 STS2_DIR
+		  3. 常见 Steam 安装位置（会检查 sts2.dll 是否真的存在）
+		  4. 都不匹配时回退到默认路径，并由 CheckGameDir 目标给出明确报错
+	-->
+	<PropertyGroup>
+		<Sts2Dir Condition="'$(Sts2Dir)' == '' and '$(STS2_DIR)' != ''">$(STS2_DIR)</Sts2Dir>
+		<Sts2Dir Condition="'$(Sts2Dir)' == '' and Exists('C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2\data_sts2_windows_x86_64\sts2.dll')">C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2</Sts2Dir>
+		<Sts2Dir Condition="'$(Sts2Dir)' == '' and Exists('D:\Steam\steamapps\common\Slay the Spire 2\data_sts2_windows_x86_64\sts2.dll')">D:\Steam\steamapps\common\Slay the Spire 2</Sts2Dir>
+		<Sts2Dir Condition="'$(Sts2Dir)' == '' and Exists('D:\steamapps\common\Slay the Spire 2\data_sts2_windows_x86_64\sts2.dll')">D:\steamapps\common\Slay the Spire 2</Sts2Dir>
+		<Sts2Dir Condition="'$(Sts2Dir)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2</Sts2Dir>
+
 		<Sts2DataDir>$(Sts2Dir)\data_sts2_windows_x86_64</Sts2DataDir>
 
-		<!-- RitsuLib 兼容版路径，版本号要与游戏版本一致 -->
-		<RitsuLibDir>$(Sts2Dir)\..\..\workshop\content\2868840\3747602295\compat\0.111.0</RitsuLibDir>
+		<!-- RitsuLib 兼容版：路径形如 <Steam>\steamapps\workshop\content\2868840\<id>\compat\<游戏版本> -->
+		<RitsuLibDir Condition="'$(RitsuLibDir)' == ''">$(Sts2Dir)\..\..\workshop\content\2868840\3747602295\compat\0.111.0</RitsuLibDir>
 
 		<!-- 构建产物默认拷到游戏的 mods 目录；可用 -p:ModsOutDir=... 改到别处 -->
 		<ModsOutDir Condition="'$(ModsOutDir)' == ''">$(Sts2Dir)\mods</ModsOutDir>
@@ -38,6 +51,14 @@
 			<Private>false</Private>
 		</Reference>
 	</ItemGroup>
+
+	<!-- 路径没解析对时给出人话报错，而不是一堆 CS0006 -->
+	<Target Name="CheckGameDir" BeforeTargets="ResolveAssemblyReferences">
+		<Error Condition="!Exists('$(Sts2DataDir)\sts2.dll')"
+		       Text="找不到 sts2.dll（当前 Sts2Dir=$(Sts2Dir)）。请用 -p:Sts2Dir=&quot;你的游戏目录&quot; 指定，或在工程目录建一个 Directory.Build.props 设置 Sts2Dir。" />
+		<Error Condition="!Exists('$(RitsuLibDir)\STS2-RitsuLib.dll')"
+		       Text="找不到 RitsuLib（当前 RitsuLibDir=$(RitsuLibDir)）。请确认创意工坊已安装 STS2-RitsuLib，并用 -p:RitsuLibDir=&quot;...\compat\0.111.0&quot; 指定。" />
+	</Target>
 
 	<!-- 构建完成后复制 dll + json 到 mods\RobMerchant -->
 	<Target Name="Copy Mod" AfterTargets="PostBuildEvent">
