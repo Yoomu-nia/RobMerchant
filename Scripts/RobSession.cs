@@ -21,6 +21,12 @@ internal static class RobSession
 	/// <summary>正在抢劫的那家商店（战斗结束后要回到它）。</summary>
 	public static MerchantRoom? PendingShop { get; private set; }
 
+	/// <summary>
+	/// 读档重进免费商店时，跳过 <c>RunState.AppendToMapPointHistory</c> 的重复追加
+	/// （存档是在商店里写的，历史里已经有这个节点了）。
+	/// </summary>
+	public static bool SuppressHistoryAppend { get; set; }
+
 	/// <summary>如果换了新的一局，清空上一局的内存状态。</summary>
 	public static void EnsureRun(IRunState? runState)
 	{
@@ -36,22 +42,12 @@ internal static class RobSession
 
 		Robbed.Clear();
 		PendingShop = null;
+		SuppressHistoryAppend = false;
 		_runState = runState;
 	}
 
 	/// <summary>这家商店是否已经被抢过（价格 0 / 不再出按钮）。</summary>
 	public static bool IsRobbed(MerchantRoom shop) => Robbed.Contains(shop);
-
-	/// <summary>
-	/// 读档后重新开出来的一间免费商店：登记成“已抢劫”，
-	/// 这样价格归零补丁会生效、界面也不会再生成抢劫按钮。
-	/// </summary>
-	public static void MarkFreeShop(MerchantRoom shop, IRunState? runState)
-	{
-		EnsureRun(runState);
-		Robbed.Add(shop);
-		Log.Info("[RobMerchant] 读档后登记免费商店");
-	}
 
 	public static void BeginRob(MerchantRoom shop)
 	{

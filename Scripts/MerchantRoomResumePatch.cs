@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Saves;
 
 namespace RobMerchant;
 
@@ -45,6 +46,11 @@ internal static class MerchantRoomResumePatch
 			NMapScreen.Instance?.SetTravelEnabled(true);
 
 			Log.Info("[RobMerchant] 战斗结束，已返回原商店");
+
+			// 战斗胜利时我们跳过了自动存档（见 SkipVictorySavePatch），
+			// 改在这里存一次：此时人正在免费商店里，存档点就是这家商店节点。
+			await SaveManager.Instance.SaveRun(null, saveProgress: false);
+			Log.Info("[RobMerchant] 已在免费商店内存档");
 		}
 		catch (Exception e)
 		{
