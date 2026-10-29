@@ -1,23 +1,45 @@
 using MegaCrit.Sts2.Core.Logging;
-using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.Encounters;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace RobMerchant;
 
 /// <summary>
-/// 记录“这次战斗是从哪个商店打出去的”，用于战后回到同一家商店。
-/// 阶段 3 先放内存里；阶段 5 会换成 RitsuLib 的单局持久化数据。
+/// 本局内的临时状态（只放内存，不涉及存档）：
+/// - 哪一家商店刚被抢过（战后要回到它、价格 0）
+/// - 哪一家商店正在等待战斗结束
+///
+/// 注意：跨局不能残留，所以每次商店界面创建时都会调用 <see cref="EnsureRun"/>，
+/// 发现 RunState 实例变了（新的一局）就整体清空。
 /// </summary>
 internal static class RobSession
 {
 	private static readonly HashSet<MerchantRoom> Robbed = new();
 
+	private static IRunState? _runState;
+
 	/// <summary>正在抢劫的那家商店（战斗结束后要回到它）。</summary>
 	public static MerchantRoom? PendingShop { get; private set; }
 
-	/// <summary>这家商店是否已经被抢过（同一局内不重复刷按钮）。</summary>
+	/// <summary>如果换了新的一局，清空上一局的内存状态。</summary>
+	public static void EnsureRun(IRunState? runState)
+	{
+		if (runState == null || ReferenceEquals(_runState, runState))
+		{
+			return;
+		}
+
+		if (_runState != null)
+		{
+			Log.Info("[RobMerchant] 检测到新的 RunState，清空上一局的抢劫状态");
+		}
+
+		Robbed.Clear();
+		PendingShop = null;
+		_runState = runState;
+	}
+
+	/// <summary>这家商店是否已经被抢过（价格 0 / 不再出按钮）。</summary>
 	public static bool IsRobbed(MerchantRoom shop) => Robbed.Contains(shop);
 
 	public static void BeginRob(MerchantRoom shop)

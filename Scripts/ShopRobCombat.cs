@@ -36,7 +36,9 @@ internal static class ShopRobCombat
 				return;
 			}
 
+			RobSession.EnsureRun(runState);
 			RobSession.BeginRob(shop);
+			RobRunData.MarkRobbed(runState);
 
 			var encounter = ModelDb.Encounter<FakeMerchantEventEncounter>().ToMutable();
 			var combatRoom = new CombatRoom(encounter, runState);

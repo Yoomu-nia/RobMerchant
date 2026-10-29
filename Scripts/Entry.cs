@@ -22,6 +22,16 @@ public class Entry
 		// 让 tscn 能加载本程序集里的脚本
 		ScriptManagerBridge.LookupScriptsInAssembly(typeof(Entry).Assembly);
 
-		Log.Info("[RobMerchant] initialized (stage 2 scaffold)");
+		// 注册“本局已抢劫”的持久化数据槽位
+		try
+		{
+			RobRunData.Register();
+		}
+		catch (Exception e)
+		{
+			Log.Error("[RobMerchant] 注册单局数据失败: " + e);
+		}
+
+		Log.Info("[RobMerchant] initialized (stage 5)");
 	}
 }
