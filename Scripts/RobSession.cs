@@ -42,6 +42,17 @@ internal static class RobSession
 	/// <summary>这家商店是否已经被抢过（价格 0 / 不再出按钮）。</summary>
 	public static bool IsRobbed(MerchantRoom shop) => Robbed.Contains(shop);
 
+	/// <summary>
+	/// 读档后重新开出来的一间免费商店：登记成“已抢劫”，
+	/// 这样价格归零补丁会生效、界面也不会再生成抢劫按钮。
+	/// </summary>
+	public static void MarkFreeShop(MerchantRoom shop, IRunState? runState)
+	{
+		EnsureRun(runState);
+		Robbed.Add(shop);
+		Log.Info("[RobMerchant] 读档后登记免费商店");
+	}
+
 	public static void BeginRob(MerchantRoom shop)
 	{
 		PendingShop = shop;
