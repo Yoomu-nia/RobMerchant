@@ -24,7 +24,7 @@
 		<Sts2DataDir>$(Sts2Dir)\data_sts2_windows_x86_64</Sts2DataDir>
 
 		<!-- RitsuLib 兼容版：路径形如 <Steam>\steamapps\workshop\content\2868840\<id>\compat\<游戏版本> -->
-		<RitsuLibDir Condition="'$(RitsuLibDir)' == ''">$(Sts2Dir)\..\..\workshop\content\2868840\3747602295\compat\0.111.0</RitsuLibDir>
+		<RitsuLibDir Condition="'$(RitsuLibDir)' == ''">$(Sts2Dir)\..\..\workshop\content\2868840\3747602295\compat\0.113.0</RitsuLibDir>
 
 		<!-- 构建产物默认拷到游戏的 mods 目录；可用 -p:ModsOutDir=... 改到别处 -->
 		<ModsOutDir Condition="'$(ModsOutDir)' == ''">$(Sts2Dir)\mods</ModsOutDir>
@@ -57,7 +57,7 @@
 		<Error Condition="!Exists('$(Sts2DataDir)\sts2.dll')"
 		       Text="找不到 sts2.dll（当前 Sts2Dir=$(Sts2Dir)）。请用 -p:Sts2Dir=&quot;你的游戏目录&quot; 指定，或在工程目录建一个 Directory.Build.props 设置 Sts2Dir。" />
 		<Error Condition="!Exists('$(RitsuLibDir)\STS2-RitsuLib.dll')"
-		       Text="找不到 RitsuLib（当前 RitsuLibDir=$(RitsuLibDir)）。请确认创意工坊已安装 STS2-RitsuLib，并用 -p:RitsuLibDir=&quot;...\compat\0.111.0&quot; 指定。" />
+		       Text="找不到 RitsuLib（当前 RitsuLibDir=$(RitsuLibDir)）。请确认创意工坊已安装 STS2-RitsuLib，并用 -p:RitsuLibDir=&quot;...\compat\0.113.0&quot; 指定。" />
 	</Target>
 
 	<!-- 构建完成后复制 dll + json 到 mods\RobMerchant -->

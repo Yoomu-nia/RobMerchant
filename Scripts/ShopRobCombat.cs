@@ -28,8 +28,9 @@ internal static class ShopRobCombat
 				return;
 			}
 
-			// RunManager.State 是 private，这里从商店玩家身上取当前局状态
-			IRunState runState = shop.GetLocalInventory().Player.RunState;
+			// RunManager.State 是 private；v0.113 起商店库存也移到了 MerchantSynchronizer，
+			// 所以统一从 RunManager 取当前局状态
+			IRunState? runState = runManager.DebugOnlyGetState();
 			if (runState == null)
 			{
 				Log.Warn("[RobMerchant] 取不到 RunState，忽略抢劫请求");

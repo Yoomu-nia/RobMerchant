@@ -6,13 +6,13 @@
 > A “touch the rug” button appears in every shop. Poke it a few times, the merchant warns you,
 > then you can rob him. Win the fight, come back to the same shop with every price set to 0.
 > After robbing once, all later shops in the run have no merchant. Resets on a new run.
-> Game v0.111.0 · requires RitsuLib.
+> Game v0.113.0 · requires RitsuLib.
 
 ## 版本
 
-- 游戏：v0.111.0（正式版）
+- 游戏：v0.113.0（正式版）
 - 依赖：RitsuLib（创意工坊 `STS2-RitsuLib`，兼容版 0.111.0）
-- Mod 版本：0.2.0
+- Mod 版本：0.2.1
 
 ## 功能
 
@@ -124,7 +124,7 @@ dotnet build -c Release -p:ModsOutDir="D:\out"
 ```
 
 RitsuLib 路径默认是
-`<游戏目录>\..\..\workshop\content\2868840\3747602295\compat\0.111.0`，
+`<游戏目录>\..\..\workshop\content\2868840\3747602295\compat\0.113.0`，
 如果你的工坊目录不同，用 `-p:RitsuLibDir="..."` 指定。
 
 ## 仓库结构

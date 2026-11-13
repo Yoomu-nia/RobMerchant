@@ -42,7 +42,10 @@ internal static class MerchantRoomResumePatch
 			await PreloadManager.LoadRoomMerchantAssets();
 
 			IReadOnlyList<Player> players = runState?.Players ?? Array.Empty<Player>();
-			NRun.Instance?.SetCurrentRoom(NMerchantRoom.Create(shop, players));
+
+			// v0.113：商店拆分后普通商店是 NStandardMerchantRoom，Create 只接收玩家列表；
+			// 货架仍由 MerchantSynchronizer 持有，进战斗时没有 OnMerchantExited，所以原样保留。
+			NRun.Instance?.SetCurrentRoom(NStandardMerchantRoom.Create(players));
 			NMapScreen.Instance?.SetTravelEnabled(true);
 
 			Log.Info("[RobMerchant] 战斗结束，已返回原商店");

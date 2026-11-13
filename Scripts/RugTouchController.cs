@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Nodes.Vfx.Utilities;
+using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace RobMerchant;
@@ -320,14 +321,21 @@ public partial class RugTouchController : Control
 			return;
 		}
 
-		IRunState? runState = room.Room.GetLocalInventory().Player.RunState;
-		if (runState is not RunState state || RobFlags.HasRobbed(runState) || RobFlags.IsFreeShop(runState, room.Room))
+		// v0.113：NMerchantRoom 不再持有 Room 引用，统一从 RunManager 取当前局状态
+		RunState? runState = RunManager.Instance?.DebugOnlyGetState();
+		if (runState?.CurrentRoom is not MerchantRoom shop)
+		{
+			Log.Warn("[RobMerchant] 确认抢劫时不在商店房间");
+			return;
+		}
+
+		if (RobFlags.HasRobbed(runState) || RobFlags.IsFreeShop(runState, shop))
 		{
 			Log.Warn("[RobMerchant] 本商店已处理过，忽略确认");
 			return;
 		}
 
-		if (state.CurrentMapCoord is not MapCoord coord)
+		if (runState.CurrentMapCoord is not MapCoord coord)
 		{
 			Log.Warn("[RobMerchant] 拿不到当前地图坐标，忽略确认");
 			return;
@@ -335,7 +343,7 @@ public partial class RugTouchController : Control
 
 		var payload = new RobPayload
 		{
-			ActIndex = state.CurrentActIndex,
+			ActIndex = runState.CurrentActIndex,
 			Col = coord.col,
 			Row = coord.row
 		};
@@ -356,7 +364,7 @@ public partial class RugTouchController : Control
 		{
 			// 单人/离线兜底：直接本地开战
 			Log.Warn("[RobMerchant] 网络动作入队失败，退回本地开战");
-			Callable.From(() => ShopRobCombat.Start(room.Room)).CallDeferred();
+			Callable.From(() => ShopRobCombat.Start(shop)).CallDeferred();
 		}
 	}
 

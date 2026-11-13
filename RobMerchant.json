@@ -3,8 +3,8 @@
 	"name": "抢劫商人",
 	"author": "QAQ",
 	"description": "在商店里碰商人的地毯挑衅他，确认后与商人战斗；胜利后回到原商店，所有商品价格归零，由玩家自行挑选。支持单人/联机。",
-	"version": "0.2.0",
-	"min_game_version": "0.111.0",
+	"version": "0.2.1",
+	"min_game_version": "0.113.0",
 	"has_pck": false,
 	"has_dll": true,
 	"dependencies": [
